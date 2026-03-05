@@ -1,29 +1,41 @@
-# Fill-4-Me Production Makefile
+# Makefile for Fill-4-Me Extension Packaging
 
-.PHONY: all build zip clean icons
+# Variables
+NAME = fill-4-me
+VERSION = $(shell node -p "require('./package.json').version")
+DIST_DIR = dist
+PACKAGE_NAME = $(NAME)-v$(VERSION).zip
 
-# Default target
-all: build zip
+.PHONY: all clean build package help
 
-# Build the production assets
-build:
-	@echo "Building production assets..."
-	npm run build
-
-# Package the extension for upload
-zip: build
-	@echo "Creating production zip..."
-	@mkdir -p releases
-	@cd dist && zip -r ../releases/fill-4-me-v$$(node -p "require('./package.json').version").zip .
-	@echo "Package created in releases/ folder."
+all: package
 
 # Clean build artifacts
 clean:
-	@echo "Cleaning build artifacts..."
-	rm -rf dist
-	rm -rf releases
+	@echo "Cleaning up..."
+	rm -rf $(DIST_DIR)
+	rm -f *.zip
 
-# Helper to remind about icons
-icons:
-	@echo "Icons are located in public/ folder."
-	@echo "Ensure you have icon16.png, icon48.png, and icon128.png ready."
+# Build the project
+build: clean
+	@echo "Building the project..."
+	npm run build
+
+# Package the extension for Chrome Web Store
+package: build
+	@echo "Packaging extension v$(VERSION)..."
+	@if [ -d "$(DIST_DIR)" ]; then \
+		cd $(DIST_DIR) && zip -r ../$(PACKAGE_NAME) *; \
+		echo "Successfully created $(PACKAGE_NAME)"; \
+	else \
+		echo "Error: $(DIST_DIR) directory not found. Build failed?"; \
+		exit 1; \
+	fi
+
+# Help command
+help:
+	@echo "Available commands:"
+	@echo "  make build    - Build the project (npm run build)"
+	@echo "  make package  - Build and package the extension into a .zip file"
+	@echo "  make clean    - Remove build artifacts and zip files"
+	@echo "  make help     - Show this help message"

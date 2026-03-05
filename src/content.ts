@@ -6,26 +6,45 @@
 console.log('Fill-4-Me: Content script loaded');
 
 const SOCIAL_KEYWORDS = [
-  'linkedin', 'github', 'twitter', 'instagram', 'portfolio', 'social', 'profile', 'website'
+  'linkedin', 'github', 'twitter', 'instagram', 'portfolio', 'social', 'profile', 'website', 'facebook', 'mastodon', 'bluesky', 'threads', 'youtube', 'twitch', 'discord', 'reddit', 'tiktok', 'behance', 'dribbble', 'medium', 'substack'
+];
+
+const EXCLUDED_KEYWORDS = [
+  'email', 'phone', 'tel', 'mobile', 'password', 'address', 'zip', 'city', 'state', 'country', 'postal', 'search', 'query', 'q', 'subject', 'message', 'body',
+  'cc-', 'cvv', 'card', 'expiry', 'billing', 'shipping', 'login', 'signin', 'signup', 'pass', 'code', 'otp', 'token', 'captcha'
 ];
 
 function findSocialInputs() {
-  const inputs = document.querySelectorAll('input[type="text"], input[type="url"]');
+  const inputs = document.querySelectorAll('input:not([type="password"]):not([type="email"]):not([type="tel"]):not([type="search"]):not([type="checkbox"]):not([type="radio"])');
+  
   inputs.forEach(input => {
-    const name = input.getAttribute('name')?.toLowerCase() || '';
-    const placeholder = input.getAttribute('placeholder')?.toLowerCase() || '';
-    const id = input.getAttribute('id')?.toLowerCase() || '';
-    const label = document.querySelector(`label[for="${input.id}"]`)?.textContent?.toLowerCase() || '';
+    const htmlInput = input as HTMLInputElement;
+    const name = htmlInput.getAttribute('name')?.toLowerCase() || '';
+    const placeholder = htmlInput.getAttribute('placeholder')?.toLowerCase() || '';
+    const id = htmlInput.getAttribute('id')?.toLowerCase() || '';
+    const ariaLabel = htmlInput.getAttribute('aria-label')?.toLowerCase() || '';
+    const label = document.querySelector(`label[for="${htmlInput.id}"]`)?.textContent?.toLowerCase() || '';
 
+    // Check if it's a social field
     const isSocial = SOCIAL_KEYWORDS.some(keyword => 
       name.includes(keyword) || 
       placeholder.includes(keyword) || 
       id.includes(keyword) ||
-      label.includes(keyword)
+      label.includes(keyword) ||
+      ariaLabel.includes(keyword)
     );
 
-    if (isSocial && !(input as HTMLElement).dataset.fill4me) {
-      injectFillButton(input as HTMLInputElement);
+    // Check if it's an excluded field
+    const isExcluded = EXCLUDED_KEYWORDS.some(keyword => 
+      name.includes(keyword) || 
+      placeholder.includes(keyword) || 
+      id.includes(keyword) ||
+      label.includes(keyword) ||
+      ariaLabel.includes(keyword)
+    );
+
+    if (isSocial && !isExcluded && !htmlInput.dataset.fill4me) {
+      injectFillButton(htmlInput);
     }
   });
 }

@@ -9,17 +9,12 @@ import {
   ExternalLink, 
   Check, 
   AlertCircle,
-  LayoutGrid,
-  List,
   Download,
-  Info,
   Github as GithubIcon,
   Sparkles,
-  Coffee,
   X,
   ShieldCheck,
-  Zap,
-  HelpCircle
+  Zap
 } from 'lucide-react';
 import { SocialProfile, Platform, ExtensionSettings, AIProvider } from './types';
 import { PLATFORMS } from './constants';
@@ -76,12 +71,6 @@ const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLI
   )
 );
 
-const Badge = ({ children, className }: { children: React.ReactNode, className?: string }) => (
-  <span className={cn('px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider', className)}>
-    {children}
-  </span>
-);
-
 // --- Main App ---
 
 export default function App() {
@@ -101,11 +90,8 @@ export default function App() {
   const [isAdding, setIsAdding] = useState(false);
   const [isMagicFill, setIsMagicFill] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
-  const [isTermsOpen, setIsTermsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -159,10 +145,6 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" className="hidden sm:flex" onClick={() => setIsHelpOpen(true)}>
-              <HelpCircle className="w-4 h-4 mr-2" />
-              Help
-            </Button>
             <Button variant="ghost" size="sm" onClick={() => setIsSettingsOpen(true)}>
               <Settings className="w-4 h-4" />
             </Button>
@@ -189,7 +171,7 @@ export default function App() {
           
           <div className="flex items-center gap-3">
             <Button 
-              variant="accent" 
+              variant="ghost" 
               size="sm" 
               className="gap-2"
               onClick={() => setIsMagicFill(true)}
@@ -197,35 +179,11 @@ export default function App() {
               <Sparkles className="w-4 h-4" />
               AI Magic Fill
             </Button>
-
-            <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-lg">
-              <button 
-                onClick={() => setViewMode('grid')}
-                className={cn(
-                  "p-1.5 rounded-md transition-all",
-                  viewMode === 'grid' ? "bg-white shadow-sm text-slate-900" : "text-slate-500 hover:text-slate-700"
-                )}
-              >
-                <LayoutGrid className="w-4 h-4" />
-              </button>
-              <button 
-                onClick={() => setViewMode('list')}
-                className={cn(
-                  "p-1.5 rounded-md transition-all",
-                  viewMode === 'list' ? "bg-white shadow-sm text-slate-900" : "text-slate-500 hover:text-slate-700"
-                )}
-              >
-                <List className="w-4 h-4" />
-              </button>
-            </div>
           </div>
         </div>
 
-        {/* Profile Grid/List */}
-        <div className={cn(
-          "grid gap-4",
-          viewMode === 'grid' ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"
-        )}>
+        {/* Profile Grid */}
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           <AnimatePresence mode="popLayout">
             {filteredProfiles.map((profile) => (
               <ProfileCard 
@@ -234,7 +192,6 @@ export default function App() {
                 onDelete={deleteProfile}
                 onCopy={copyToClipboard}
                 isCopied={copiedId === profile.id}
-                viewMode={viewMode}
               />
             ))}
           </AnimatePresence>
@@ -274,14 +231,9 @@ export default function App() {
                 Fill-4-Me works best as a browser extension. It automatically detects social media input fields on websites like LinkedIn, GitHub, and Twitter, allowing you to fill them with a single click.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Button className="bg-white text-slate-900 hover:bg-slate-100 gap-2">
-                  <Download className="w-4 h-4" />
-                  Chrome Web Store
-                </Button>
-                <Button className="bg-white text-slate-900 hover:bg-slate-100 gap-2">
-                  <Download className="w-4 h-4" />
-                  Firefox Add-ons
-                </Button>
+                <p className="text-sm text-slate-500">
+                  Available for Chrome and Firefox.
+                </p>
               </div>
             </div>
             <div className="bg-slate-800/50 rounded-2xl p-6 border border-slate-700">
@@ -312,27 +264,13 @@ export default function App() {
             <div className="flex flex-col gap-2">
               <p className="text-xs text-slate-500">© {new Date().getFullYear()} Fill-4-Me. Open Source Extension.</p>
               <div className="flex gap-6 text-xs text-slate-500">
-                <button onClick={() => setIsHelpOpen(true)} className="hover:text-white transition-colors">Help & About</button>
                 <button onClick={() => setIsSettingsOpen(true)} className="hover:text-white transition-colors">Settings</button>
-                <button onClick={() => setIsPrivacyOpen(true)} className="hover:text-white transition-colors">Privacy Policy</button>
-                <button onClick={() => setIsTermsOpen(true)} className="hover:text-white transition-colors">Terms of Service</button>
+                <button onClick={() => setIsPrivacyOpen(true)} className="hover:text-white transition-colors">Privacy</button>
                 <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-1">
                   <GithubIcon className="w-3 h-3" />
                   GitHub
                 </a>
               </div>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <a 
-                href="https://buymeacoffee.com/iantoo" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-[#FFDD00] text-black px-4 py-2 rounded-lg font-bold text-sm hover:scale-105 transition-transform"
-              >
-                <Coffee className="w-4 h-4" />
-                Buy me a coffee
-              </a>
             </div>
           </div>
         </div>
@@ -366,21 +304,9 @@ export default function App() {
           </Modal>
         )}
 
-        {isHelpOpen && (
-          <Modal title="Help & About" onClose={() => setIsHelpOpen(false)} icon={<Info className="w-5 h-5 text-blue-500" />}>
-            <HelpPanel onClose={() => setIsHelpOpen(false)} />
-          </Modal>
-        )}
-
         {isPrivacyOpen && (
           <Modal title="Privacy Policy" onClose={() => setIsPrivacyOpen(false)} icon={<ShieldCheck className="w-5 h-5 text-green-500" />}>
             <PrivacyPanel onClose={() => setIsPrivacyOpen(false)} />
-          </Modal>
-        )}
-
-        {isTermsOpen && (
-          <Modal title="Terms of Service" onClose={() => setIsTermsOpen(false)} icon={<LayoutGrid className="w-5 h-5 text-slate-500" />}>
-            <TermsPanel onClose={() => setIsTermsOpen(false)} />
           </Modal>
         )}
       </AnimatePresence>
@@ -420,53 +346,15 @@ function ProfileCard({
   profile, 
   onDelete, 
   onCopy, 
-  isCopied,
-  viewMode 
+  isCopied
 }: { 
   profile: SocialProfile, 
   onDelete: (id: string) => void, 
   onCopy: (text: string, id: string) => void,
-  isCopied: boolean,
-  viewMode: 'grid' | 'list'
+  isCopied: boolean
 }) {
   const platform = PLATFORMS.find(p => p.value === profile.platform) || PLATFORMS[PLATFORMS.length - 1];
   const Icon = platform.icon;
-
-  if (viewMode === 'list') {
-    return (
-      <motion.div 
-        layout
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        className="group flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl card-hover"
-      >
-        <div className={cn("p-2 rounded-lg bg-slate-50", platform.color)}>
-          <Icon className="w-5 h-5" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-slate-900 truncate">{profile.label}</h3>
-            <Badge className="bg-slate-100 text-slate-600">{platform.label}</Badge>
-          </div>
-          <p className="text-sm text-slate-500 truncate">{profile.url}</p>
-        </div>
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button variant="ghost" size="sm" onClick={() => onCopy(profile.url, profile.id)}>
-            {isCopied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
-          </Button>
-          <Button variant="ghost" size="sm" asChild>
-            <a href={profile.url} target="_blank" rel="noopener noreferrer">
-              <ExternalLink className="w-4 h-4" />
-            </a>
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => onDelete(profile.id)} className="text-red-500 hover:text-red-600 hover:bg-red-50">
-            <Trash2 className="w-4 h-4" />
-          </Button>
-        </div>
-      </motion.div>
-    );
-  }
 
   return (
     <motion.div 
@@ -484,30 +372,23 @@ function ProfileCard({
           <Button variant="ghost" size="sm" onClick={() => onCopy(profile.url, profile.id)} className="h-8 w-8 p-0">
             {isCopied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-slate-400 group-hover:text-slate-600" />}
           </Button>
+          <Button variant="ghost" size="sm" asChild className="h-8 w-8 p-0">
+            <a href={profile.url} target="_blank" rel="noopener noreferrer">
+              <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-slate-600" />
+            </a>
+          </Button>
           <Button variant="ghost" size="sm" onClick={() => onDelete(profile.id)} className="h-8 w-8 p-0 text-slate-400 hover:text-red-500 hover:bg-red-50">
             <Trash2 className="w-4 h-4" />
           </Button>
         </div>
       </div>
 
-      <div className="mb-4 flex-1">
-        <h3 className="font-bold text-slate-900 leading-tight mb-1">{profile.label}</h3>
+      <div className="mb-2 flex-1">
+        <h3 className="font-bold text-slate-900 leading-tight mb-1 truncate">{profile.label}</h3>
         <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">{platform.label}</p>
         <div className="bg-slate-50 rounded-lg p-3 border border-slate-100">
           <p className="text-xs text-slate-500 font-mono break-all line-clamp-2">{profile.url}</p>
         </div>
-      </div>
-
-      <div className="pt-4 border-t border-slate-50 mt-auto">
-        <a 
-          href={profile.url} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
-        >
-          View Profile
-          <ExternalLink className="w-3.5 h-3.5" />
-        </a>
       </div>
     </motion.div>
   );
@@ -862,48 +743,6 @@ function SettingsPanel({ settings, onUpdateSettings, onClose }: { settings: Exte
   );
 }
 
-function HelpPanel({ onClose }: { onClose: () => void }) {
-  return (
-    <div className="p-6 space-y-6">
-      <div className="text-center space-y-2">
-        <div className="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <span className="text-white font-bold text-3xl">F</span>
-        </div>
-        <h3 className="text-xl font-bold">Fill-4-Me v1.0.0</h3>
-        <p className="text-sm text-slate-500">Your privacy-first social profile companion.</p>
-      </div>
-
-      <div className="space-y-4">
-        <div className="p-4 bg-blue-50 rounded-xl border border-blue-100 space-y-2">
-          <h4 className="text-sm font-bold text-blue-900">How to use</h4>
-          <p className="text-xs text-blue-800 leading-relaxed">
-            1. Add your profiles manually or use **AI Magic Fill** to extract them from text.<br/>
-            2. Install the browser extension to see the "F" icon in input fields.<br/>
-            3. Click the icon to select a profile and auto-fill the field.
-          </p>
-        </div>
-
-        <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 space-y-2">
-          <h4 className="text-sm font-bold text-slate-900">Open Source</h4>
-          <p className="text-xs text-slate-600 leading-relaxed">
-            Fill-4-Me is open-source and built for the community. If you find it useful, consider supporting the developer!
-          </p>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <Button variant="secondary" className="w-full gap-2" asChild>
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer">
-            <GithubIcon className="w-4 h-4" />
-            View on GitHub
-          </a>
-        </Button>
-        <Button onClick={onClose} className="w-full">Close</Button>
-      </div>
-    </div>
-  );
-}
-
 function PrivacyPanel({ onClose }: { onClose: () => void }) {
   return (
     <div className="p-6 space-y-6">
@@ -929,39 +768,6 @@ function PrivacyPanel({ onClose }: { onClose: () => void }) {
           </p>
           <p>
             <strong>6. Changes:</strong> We may update this policy from time to time. Any changes will be reflected here.
-          </p>
-        </div>
-      </div>
-      <Button onClick={onClose} className="w-full">Close</Button>
-    </div>
-  );
-}
-
-function TermsPanel({ onClose }: { onClose: () => void }) {
-  return (
-    <div className="p-6 space-y-6">
-      <div className="prose prose-slate prose-sm max-w-none">
-        <h3 className="text-lg font-bold">Terms of Service</h3>
-        <p className="text-slate-600">Last updated: {new Date().toLocaleDateString()}</p>
-        
-        <div className="space-y-4 text-sm text-slate-600">
-          <p>
-            <strong>1. Acceptance:</strong> By installing and using the Fill-4-Me extension, you agree to be bound by these Terms of Service.
-          </p>
-          <p>
-            <strong>2. License:</strong> Fill-4-Me is provided under the MIT License. You are free to use, modify, and distribute the software in accordance with the license terms.
-          </p>
-          <p>
-            <strong>3. Proper Use:</strong> You agree not to use Fill-4-Me for any unlawful or prohibited purposes. You are responsible for the data you save and fill using the extension.
-          </p>
-          <p>
-            <strong>4. Disclaimer:</strong> Fill-4-Me is provided "as is" without any warranties, express or implied. We do not guarantee that the extension will be error-free or uninterrupted.
-          </p>
-          <p>
-            <strong>5. Limitation of Liability:</strong> In no event shall the developers of Fill-4-Me be liable for any damages arising out of the use or inability to use the extension.
-          </p>
-          <p>
-            <strong>6. Governing Law:</strong> These terms are governed by the laws of the jurisdiction in which the developer resides.
           </p>
         </div>
       </div>

@@ -42,5 +42,28 @@ Privacy is the core of Fill-4-Me.
 - `/public/manifest.json`: Extension configuration.
 - `/src/types.ts`: TypeScript definitions for profiles.
 
+## Packaging for Chrome Web Store
+
+To package the extension for submission to the Chrome Web Store, you can use the provided `make` command. This will build the project and create a versioned `.zip` file.
+
+### Prerequisites
+-   `make` installed on your system
+-   `zip` utility installed
+
+### Command
+```bash
+make package
+```
+
+This will:
+1.  Clean the `dist` directory.
+2.  Run `npm run build` to generate the latest production assets.
+3.  Zip the contents of the `dist` folder into a file named `fill-4-me-vX.X.X.zip` (where `X.X.X` is the version from `package.json`).
+
+### Other Makefile Commands
+-   `make build`: Run the production build.
+-   `make clean`: Remove build artifacts and zip files.
+-   `make help`: Show available commands.
+
 ## License
 This project is open-source and available under the [MIT License](LICENSE).
