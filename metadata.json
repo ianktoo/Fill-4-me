@@ -1,0 +1,5 @@
+{
+  "name": "Fill-4-Me",
+  "description": "A browser extension to save and auto-fill your social media profiles across the web.",
+  "requestFramePermissions": []
+}
